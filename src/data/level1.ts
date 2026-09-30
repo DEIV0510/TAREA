@@ -318,10 +318,10 @@ export const L1_BANK: L1Question[] = [
   {
     id: 't8',
     type: 'tf',
-    slide: 5,
-    statement: 'Un «billón» en español equivale a un millón de millones.',
+    slide: 4,
+    statement: 'La publicidad es creativa porque combina imagen, mensaje y emoción.',
     truth: true,
-    explain: 'Realidad. Es lo que en inglés se llama «trillion». Por eso US$1,19 billones es muchísimo dinero.',
+    explain: 'Realidad. «Creativa» es una de las 7 características: une imagen, mensaje y emoción para llamar la atención.',
   },
 
   /* ───── Conecta las ideas ───── */
