@@ -301,9 +301,9 @@ export const L1_BANK: L1Question[] = [
     id: 't6',
     type: 'tf',
     slide: 7,
-    statement: 'Alphabet, Amazon y Meta concentran más de la mitad de la inversión publicitaria mundial (sin contar China).',
+    statement: 'Con la publicidad digital, una marca puede mostrar sus anuncios según la edad, los intereses y la ubicación de las personas.',
     truth: true,
-    explain: 'Realidad. Concentran el 56,1 % en 2025.',
+    explain: 'Realidad. La publicidad digital permite segmentar por edad, intereses y ubicación en Google, Meta y TikTok.',
   },
   {
     id: 't7',
@@ -651,10 +651,10 @@ export const L1_BANK: L1Question[] = [
   {
     id: 'o2',
     type: 'order',
-    slide: 5,
-    prompt: 'Ordena estas cifras de MENOR a MAYOR',
-    steps: ['US$200 mil millones (China)', 'US$306 mil millones (redes sociales)', 'US$421 mil millones (EE. UU.)', 'US$1,19 billones (mundo, 2025)', 'US$1,40 billones (mundo, 2027)'],
-    explain: 'Recuerden: un billón es un millón de millones, así que US$1,19 billones es mucho más que US$421 mil millones.',
+    slide: 10,
+    prompt: 'Ordena cómo se volvió viral «Comparte una Coca-Cola»',
+    steps: ['Buscas tu nombre o el de un amigo en la botella', 'Compartes la Coca-Cola con esa persona', 'Subes la foto a redes sociales', 'La campaña se difunde sola'],
+    explain: 'La invitación era buscar un nombre y compartir; la gente subía fotos a redes y la campaña se difundía sola: eso es viralidad.',
   },
   {
     id: 'o3',
