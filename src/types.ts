@@ -21,6 +21,8 @@ export interface Team {
   name: string
   members: string
   emoji: string
+  /** Foto de avatar (id de PHOTO_AVATARS); si no hay, se muestra el emoji */
+  photo?: string | null
   color: ColorKey
   points: number
   coins: number

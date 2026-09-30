@@ -2,6 +2,7 @@ import { L1_BANK, TYPE_ORDER } from '../data/level1'
 import { PRODUCTS } from '../data/level2'
 import { BRIEFS } from '../data/level3'
 import { BADGE_COINS, HAND_MAX, POWERS, POWER_IDS, QUICK_BONUS, STEAL_AMOUNT } from '../data/powers'
+import { TEAM_PRESETS } from '../data/teams'
 import type {
   BadgeId,
   ColorKey,
@@ -51,8 +52,8 @@ function blankStats(): Omit<Team, 'id' | 'name' | 'members' | 'emoji' | 'color'>
   }
 }
 
-export function makeTeam(p: { name: string; emoji: string; color: ColorKey; members?: string; id?: string }): Team {
-  return { id: p.id ?? uid(), name: p.name, members: p.members ?? '', emoji: p.emoji, color: p.color, ...blankStats() }
+export function makeTeam(p: { name: string; emoji: string; color: ColorKey; members?: string; id?: string; photo?: string | null }): Team {
+  return { id: p.id ?? uid(), name: p.name, members: p.members ?? '', emoji: p.emoji, photo: p.photo ?? null, color: p.color, ...blankStats() }
 }
 
 function resetStats(t: Team): Team {
@@ -468,7 +469,7 @@ export function reducer(s: GameState, a: Action): GameState {
       const byId = new Map(s.teams.map((t) => [t.id, t]))
       const teams = a.teams.map((t) => {
         const prev = byId.get(t.id)
-        return prev ? { ...prev, name: t.name, members: t.members, emoji: t.emoji, color: t.color } : t
+        return prev ? { ...prev, name: t.name, members: t.members, emoji: t.emoji, photo: t.photo ?? null, color: t.color } : t
       })
       const ids = new Set(teams.map((t) => t.id))
       const currentId = s.order[s.turn]
@@ -682,7 +683,9 @@ export function loadState(): GameState {
     if (!raw) return initialState()
     const s = JSON.parse(raw) as GameState
     if (s?.v !== 2 || !Array.isArray(s.teams)) return initialState()
-    return { ...initialState(), ...s, event: null }
+    // Equipos guardados antes de las fotos: reciben la foto de su equipo de ejemplo.
+    const teams = s.teams.map((t) => (t.photo === undefined ? { ...t, photo: TEAM_PRESETS.find((p) => p.name === t.name)?.photo ?? null } : t))
+    return { ...initialState(), ...s, teams, event: null }
   } catch {
     return initialState()
   }

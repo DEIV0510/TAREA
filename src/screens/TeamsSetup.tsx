@@ -4,18 +4,18 @@ import { useState } from 'react'
 import { TeamAvatar } from '../components/bits'
 import { CandyButton } from '../components/CandyButton'
 import { useConfirm } from '../components/Confirm'
-import { AVATARS, COLOR_KEYS, MAX_TEAMS, MIN_TEAMS, TEAM_COLORS, TEAM_PRESETS } from '../data/teams'
+import { AVATARS, COLOR_KEYS, MAX_TEAMS, MIN_TEAMS, PHOTO_AVATARS, TEAM_COLORS, TEAM_PRESETS } from '../data/teams'
 import { makeTeam, roundsFor } from '../game/engine'
 import { useGame } from '../game/GameContext'
 import { sfx } from '../lib/sound'
 import type { ColorKey, Duration, Pace, Team } from '../types'
 
-type Draft = Pick<Team, 'id' | 'name' | 'members' | 'emoji' | 'color'>
+type Draft = Pick<Team, 'id' | 'name' | 'members' | 'emoji' | 'color' | 'photo'>
 
 function presetDrafts(n: number): Draft[] {
   return TEAM_PRESETS.slice(0, n).map((p) => {
     const t = makeTeam(p)
-    return { id: t.id, name: t.name, members: '', emoji: t.emoji, color: t.color }
+    return { id: t.id, name: t.name, members: '', emoji: t.emoji, color: t.color, photo: t.photo ?? null }
   })
 }
 
@@ -30,7 +30,7 @@ export function TeamsSetup({ onBack, onStarted, onSaved }: { onBack: () => void;
   const { state, dispatch } = useGame()
   const playing = state.status === 'playing'
   const [drafts, setDrafts] = useState<Draft[]>(() =>
-    state.teams.length ? state.teams.map(({ id, name, members, emoji, color }) => ({ id, name, members, emoji, color })) : presetDrafts(4),
+    state.teams.length ? state.teams.map(({ id, name, members, emoji, color, photo }) => ({ id, name, members, emoji, color, photo: photo ?? null })) : presetDrafts(4),
   )
   const [duration, setDuration] = useState<Duration>(state.settings.duration)
   const [pace, setPace] = useState<Pace>(state.settings.pace)
@@ -45,8 +45,10 @@ export function TeamsSetup({ onBack, onStarted, onSaved }: { onBack: () => void;
     const preset = TEAM_PRESETS.find((p) => !used.has(p.name)) ?? TEAM_PRESETS[drafts.length % TEAM_PRESETS.length]
     const usedColors = new Set(drafts.map((d) => d.color))
     const color = usedColors.has(preset.color) ? (COLOR_KEYS.find((c) => !usedColors.has(c)) ?? preset.color) : preset.color
-    const t = makeTeam({ ...preset, color })
-    setDrafts((d) => [...d, { id: t.id, name: t.name, members: '', emoji: t.emoji, color: t.color }])
+    const usedPhotos = new Set(drafts.map((d) => d.photo).filter(Boolean))
+    const photo = preset.photo && !usedPhotos.has(preset.photo) ? preset.photo : (PHOTO_AVATARS.find((p) => !usedPhotos.has(p.id))?.id ?? null)
+    const t = makeTeam({ ...preset, color, photo })
+    setDrafts((d) => [...d, { id: t.id, name: t.name, members: '', emoji: t.emoji, color: t.color, photo: t.photo ?? null }])
   }
 
   const remove = (id: string) => {
@@ -144,19 +146,37 @@ export function TeamsSetup({ onBack, onStarted, onSaved }: { onBack: () => void;
                       {picker === d.id && (
                         <motion.div
                           className="absolute left-0 top-[105%] z-30 grid w-[17.5rem] grid-cols-6 gap-1 rounded-2xl bg-white p-2 shadow-[0_1rem_2rem_rgb(0_0_0/.35)] ring-2 ring-grape/30"
+                          role="listbox"
+                          aria-label="Elegir avatar"
                           initial={{ scale: 0.8, opacity: 0, y: -8 }}
                           animate={{ scale: 1, opacity: 1, y: 0 }}
                           exit={{ scale: 0.8, opacity: 0 }}
                         >
+                          <div className="col-span-6 px-1 pt-0.5 text-[0.75rem] font-black uppercase tracking-wider text-ink-soft">Fotos</div>
+                          {PHOTO_AVATARS.map((p, pi) => (
+                            <button
+                              key={p.id}
+                              onClick={() => {
+                                sfx.select()
+                                update(d.id, { photo: p.id })
+                                setPicker(null)
+                              }}
+                              className={`aspect-square overflow-hidden rounded-xl p-0.5 hover:bg-grape/15 ${d.photo === p.id ? 'bg-grape ring-2 ring-grape' : ''}`}
+                              aria-label={`Foto ${pi + 1}`}
+                            >
+                              <img src={p.src} alt="" className="size-full rounded-[0.6rem] object-cover" />
+                            </button>
+                          ))}
+                          <div className="col-span-6 px-1 pt-1 text-[0.75rem] font-black uppercase tracking-wider text-ink-soft">Emojis</div>
                           {AVATARS.map((e) => (
                             <button
                               key={e}
                               onClick={() => {
                                 sfx.select()
-                                update(d.id, { emoji: e })
+                                update(d.id, { emoji: e, photo: null })
                                 setPicker(null)
                               }}
-                              className={`grid aspect-square place-items-center rounded-xl text-[1.6rem] hover:bg-grape/15 ${e === d.emoji ? 'bg-grape/20 ring-2 ring-grape' : ''}`}
+                              className={`grid aspect-square place-items-center rounded-xl text-[1.6rem] hover:bg-grape/15 ${!d.photo && e === d.emoji ? 'bg-grape/20 ring-2 ring-grape' : ''}`}
                               aria-label={`Avatar ${e}`}
                             >
                               {e}

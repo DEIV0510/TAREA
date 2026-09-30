@@ -2,15 +2,32 @@ import { animate, AnimatePresence, motion } from 'framer-motion'
 import { X } from 'lucide-react'
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import { POWERS } from '../data/powers'
-import { TEAM_COLORS } from '../data/teams'
+import { PHOTO_BY_ID, TEAM_COLORS } from '../data/teams'
 import type { PowerId, Team } from '../types'
 
 export const fmt = (n: number) => Math.round(n).toLocaleString('es-CO')
 
 /* ───────── Avatar de equipo ───────── */
 
-export function TeamAvatar({ team, size = 3, ring = false, className = '' }: { team: Pick<Team, 'emoji' | 'color'>; size?: number; ring?: boolean; className?: string }) {
+export function TeamAvatar({ team, size = 3, ring = false, className = '' }: { team: Pick<Team, 'emoji' | 'color' | 'photo'>; size?: number; ring?: boolean; className?: string }) {
   const c = TEAM_COLORS[team.color]
+  const photo = team.photo ? PHOTO_BY_ID[team.photo] : null
+  if (photo) {
+    return (
+      <span
+        className={`inline-block shrink-0 overflow-hidden rounded-[32%] ${className}`}
+        style={{
+          width: `${size}rem`,
+          height: `${size}rem`,
+          padding: `${Math.max(0.12, size * 0.045)}rem`,
+          background: `linear-gradient(160deg, ${c.a}, ${c.b})`,
+          boxShadow: `0 ${size * 0.07}rem 0 ${c.lip}${ring ? `, 0 0 0 ${size * 0.06}rem #fff` : ''}`,
+        }}
+      >
+        <img src={photo} alt="" draggable={false} className="block size-full rounded-[28%] object-cover" />
+      </span>
+    )
+  }
   return (
     <span
       className={`inline-grid shrink-0 place-items-center rounded-[32%] ${className}`}

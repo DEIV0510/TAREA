@@ -1,4 +1,20 @@
+import foto1 from '../assets/avatars/foto-1.webp'
+import foto2 from '../assets/avatars/foto-2.webp'
+import foto3 from '../assets/avatars/foto-3.webp'
+import foto4 from '../assets/avatars/foto-4.webp'
+import foto5 from '../assets/avatars/foto-5.webp'
 import type { ColorKey } from '../types'
+
+/** Fotos de avatar que eligió el usuario (carpeta «publi»). */
+export const PHOTO_AVATARS: { id: string; src: string }[] = [
+  { id: 'foto-1', src: foto1 },
+  { id: 'foto-2', src: foto2 },
+  { id: 'foto-3', src: foto3 },
+  { id: 'foto-4', src: foto4 },
+  { id: 'foto-5', src: foto5 },
+]
+
+export const PHOTO_BY_ID: Record<string, string> = Object.fromEntries(PHOTO_AVATARS.map((p) => [p.id, p.src]))
 
 export interface Swatch {
   name: string
@@ -31,12 +47,12 @@ export const AVATARS = [
   '🐝', '🦋', '🐬', '🦉', '🎸', '🧠', '👑', '🥑',
 ]
 
-export const TEAM_PRESETS: { name: string; emoji: string; color: ColorKey }[] = [
-  { name: 'Los Creativos', emoji: '🚀', color: 'purple' },
-  { name: 'Los Campañeros', emoji: '🔥', color: 'orange' },
-  { name: 'Brain Ads', emoji: '💡', color: 'yellow' },
-  { name: 'Los Publicistas', emoji: '🐸', color: 'green' },
-  { name: 'Ad Squad', emoji: '⚡', color: 'blue' },
+export const TEAM_PRESETS: { name: string; emoji: string; color: ColorKey; photo?: string }[] = [
+  { name: 'Los Creativos', emoji: '🚀', color: 'purple', photo: 'foto-1' },
+  { name: 'Los Campañeros', emoji: '🔥', color: 'orange', photo: 'foto-2' },
+  { name: 'Brain Ads', emoji: '💡', color: 'yellow', photo: 'foto-3' },
+  { name: 'Los Publicistas', emoji: '🐸', color: 'green', photo: 'foto-4' },
+  { name: 'Ad Squad', emoji: '⚡', color: 'blue', photo: 'foto-5' },
   { name: 'Viral Kings', emoji: '🦄', color: 'pink' },
 ]
 

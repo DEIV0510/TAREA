@@ -104,7 +104,7 @@ export function Final({ onHome, onTeams }: { onHome: () => void; onTeams: () => 
           </div>
           <div className="min-w-0 flex-1" style={{ color: c.text }}>
             <div className="flex items-center justify-center gap-3 md:justify-start">
-              <TeamAvatar team={winner} size={4.4} ring />
+              <TeamAvatar team={winner} size={winner.photo ? 6.4 : 4.4} ring />
               <span className="font-display rounded-full bg-white/90 px-3 py-1 text-[1.2rem] text-ink">🥇 1.er LUGAR</span>
             </div>
             <div className="font-display mt-2 text-[clamp(2.8rem,6vw,4.6rem)] leading-none drop-shadow-[0_4px_0_rgb(0_0_0/.25)]">{winner.name.toUpperCase()}</div>
