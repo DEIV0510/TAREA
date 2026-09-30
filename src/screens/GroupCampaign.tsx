@@ -480,7 +480,7 @@ function Reveal({ level, results, product, brief }: { level: 2 | 3; results: Gro
 
       {level === 3 && (
         <p className="rounded-2xl bg-white/10 px-4 py-2.5 text-center text-[1.1rem] font-extrabold text-white">
-          📚 Lección de la exposición: personalizar y emocionar vende más que solo mostrar el producto (caso «Comparte una Coca-Cola»).
+          📚 De la exposición: las estrategias se eligen según el objetivo (informar, persuadir, recordar o emocionar) y el canal.
         </p>
       )}
     </motion.section>

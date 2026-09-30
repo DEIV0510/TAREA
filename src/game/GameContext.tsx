@@ -130,7 +130,9 @@ export function ClockProvider({ children }: { children: ReactNode }) {
   const total = state.settings.duration * 60
   const [clock, setClock] = useState(() => ({ gameId: state.gameId, elapsed: loadClock(state.gameId) }))
   const elapsed = clock.gameId === state.gameId ? clock.elapsed : loadClock(state.gameId)
-  const running = state.status === 'playing' && state.stage !== 'final' && !paused && !state.timeUp
+  // Mientras el profe ingresa las respuestas de las agencias (niveles 2 y 3) el reloj se detiene: no es tiempo de juego.
+  const entering = state.stage === 'play' && state.group?.phase === 'input'
+  const running = state.status === 'playing' && state.stage !== 'final' && !paused && !state.timeUp && !entering
 
   useEffect(() => {
     if (!running) return

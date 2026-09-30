@@ -1,7 +1,7 @@
 # AD BATTLE — La Batalla de las Agencias 📣
 
 Juego web por equipos para la clase de **Mercadeo y Publicidad**. Todas las preguntas salen de la exposición
-**«La publicidad»** (qué es, características, cifras, estrategias y el caso *Comparte una Coca-Cola*).
+**«La publicidad»** (qué es, características, cifras y estrategias según el objetivo y el canal).
 La partida dura **máximo 10 minutos**: hay un reloj arriba y, si llega a cero, se pasa directo a la Gran Final.
 
 ## Cómo se juega

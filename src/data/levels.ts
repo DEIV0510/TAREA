@@ -20,7 +20,7 @@ export const LEVELS: Record<Level, LevelInfo> = {
     a: '#38a3ff',
     b: '#6d28d9',
     bullets: [
-      'Todo sale de la exposición: qué es la publicidad, características, cifras, estrategias y el caso Coca-Cola.',
+      'Todo sale de la exposición: qué es la publicidad, características, cifras y estrategias.',
       'Minijuegos por turnos. Correcta +100 · Rápida +50 · Rachas = COMBO x2, x3, x4.',
       'Fallar no resta puntos. ¡Arriesguen!',
     ],
@@ -50,7 +50,7 @@ export const LEVELS: Record<Level, LevelInfo> = {
     bullets: [
       'Llega un brief con cliente, presupuesto y problema. Todas las agencias lo resuelven a la vez.',
       '6 decisiones en 60 segundos: concepto, público, canal, mensaje, CTA y presupuesto.',
-      'Puntuación × 15 + 🏆 150 a la mejor. Recuerden la lección de Coca-Cola: personalizar y emocionar.',
+      'Puntuación × 15 + 🏆 150 a la mejor campaña.',
     ],
     done: 'La campaña está lista para el cliente.',
   },
