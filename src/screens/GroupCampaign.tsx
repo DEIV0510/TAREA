@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { AdPreview } from '../components/AdPreview'
 import { CountUp, TeamAvatar, TimerBar } from '../components/bits'
 import { CandyButton } from '../components/CandyButton'
+import { useConfirm } from '../components/Confirm'
 import { Mascot } from '../components/Mascot'
 import { L2_FIELDS, PRODUCT_BY_ID, PRODUCTS, type Product } from '../data/level2'
 import { BRIEF_BY_ID, BRIEFS, DIMS, L3_STEPS, type Brief } from '../data/level3'
@@ -169,8 +170,9 @@ function Build({ level, fields, product, brief }: { level: 2 | 3; fields: Field[
     window.scrollTo(0, 0)
   }, [g.phase])
 
-  const evaluate = () => {
-    if (!allDone && !window.confirm('Algunas agencias no terminaron. Lo que falte se completará al azar (Nivel 2) o quedará «sin decidir» (Nivel 3). ¿Evaluar ya?')) return
+  const ask = useConfirm()
+  const evaluate = async () => {
+    if (!allDone && !(await ask(`Algunas agencias no terminaron. Lo que falte ${level === 2 ? 'se completará al azar' : 'quedará «sin decidir»'}. ¿Evaluar ya?`, { yes: 'Sí, evaluar' }))) return
     sfx.whoosh()
     dispatch({ type: 'groupEvaluate', rand: Math.random() })
   }

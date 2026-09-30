@@ -31,7 +31,7 @@ export function TopBar({ inGame, onHome }: { inGame: boolean; onHome: () => void
   const L = LEVELS[state.level]
 
   return (
-    <header className={`pointer-events-none fixed inset-x-0 top-0 z-50 flex items-center gap-2 px-3 pb-4 pt-2.5 sm:px-4 ${inGame ? 'bg-gradient-to-b from-[#170a3c] via-[#170a3ce6] to-transparent' : ''}`}>
+    <header className={`pointer-events-none fixed inset-x-0 top-0 z-50 flex items-center gap-2 px-4 pb-4 pt-[calc(0.625rem+env(safe-area-inset-top,0px))] ${inGame ? 'bg-gradient-to-b from-[#170a3c] via-[#170a3ce6] to-transparent' : ''}`}>
       <div className="pointer-events-auto flex items-center gap-2">
         {inGame && (
           <button

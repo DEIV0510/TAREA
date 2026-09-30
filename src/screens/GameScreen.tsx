@@ -236,7 +236,7 @@ export function GameScreen({ onHome, onTeams }: { onHome: () => void; onTeams: (
 
   return (
     <motion.div
-      className="mx-auto flex min-h-dvh w-full max-w-[1800px] gap-4 px-3 pb-4 pt-[4.6rem] sm:px-4"
+      className="mx-auto flex min-h-dvh w-full max-w-[1800px] gap-4 px-4 pb-4 pt-[4.6rem]"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}

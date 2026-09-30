@@ -3,6 +3,7 @@ import { ArrowLeft, Plus, RotateCcw, Sparkles, Swords, Trash2 } from 'lucide-rea
 import { useState } from 'react'
 import { TeamAvatar } from '../components/bits'
 import { CandyButton } from '../components/CandyButton'
+import { useConfirm } from '../components/Confirm'
 import { AVATARS, COLOR_KEYS, MAX_TEAMS, MIN_TEAMS, TEAM_COLORS, TEAM_PRESETS } from '../data/teams'
 import { makeTeam, roundsFor } from '../game/engine'
 import { useGame } from '../game/GameContext'
@@ -73,8 +74,9 @@ export function TeamsSetup({ onBack, onStarted, onSaved }: { onBack: () => void;
     onSaved()
   }
 
-  const restartWith = () => {
-    if (!window.confirm('¿Empezar una partida nueva? Los puntos actuales se borran.')) return
+  const ask = useConfirm()
+  const restartWith = async () => {
+    if (!(await ask('¿Empezar una partida nueva? Los puntos actuales se borran.', { yes: 'Sí, empezar', danger: true }))) return
     start()
   }
 

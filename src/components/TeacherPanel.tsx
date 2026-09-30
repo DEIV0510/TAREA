@@ -7,6 +7,7 @@ import { useGame, useUI } from '../game/GameContext'
 import { sfx } from '../lib/sound'
 import type { Pace } from '../types'
 import { TeamAvatar, fmt } from './bits'
+import { useConfirm } from './Confirm'
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
@@ -69,8 +70,9 @@ export function TeacherPanel({ onTeams, onRanking, onGame }: { onTeams: () => vo
     return () => window.removeEventListener('keydown', onKey)
   })
 
-  const confirmDo = (msg: string, fn: () => void) => {
-    if (window.confirm(msg)) fn()
+  const ask = useConfirm()
+  const confirmDo = async (msg: string, fn: () => void, danger = true) => {
+    if (await ask(msg, { danger })) fn()
   }
 
   return (
