@@ -249,11 +249,11 @@ export function GameScreen({ onHome, onTeams }: { onHome: () => void; onTeams: (
           </div>
         )}
         <div className="relative min-h-0 flex-1">
-          <AnimatePresence mode="wait">
-            <motion.div key={key} className="h-full" exit={{ opacity: 0, transition: { duration: 0.15 } }}>
-              {view}
-            </motion.div>
-          </AnimatePresence>
+          {/* Cada etapa se monta de nuevo con su animación de entrada. Sin AnimatePresence «wait»:
+              una pantalla que sale sigue leyendo el estado nuevo y su salida puede no terminar nunca. */}
+          <div key={key} className="h-full">
+            {view}
+          </div>
         </div>
       </main>
       {showRanking && (

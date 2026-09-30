@@ -90,11 +90,10 @@ export default function App() {
       <Background />
       <TopBar inGame={view !== 'home'} onHome={goHome} />
 
-      <AnimatePresence mode="wait">
-        {view === 'home' && <Home key="home" onPlay={play} onHowTo={() => setModal('howto')} onRanking={() => setModal('ranking')} onTeams={goSetup} />}
+      {/* Sin AnimatePresence «wait» aquí: ver la nota en GameScreen. */}
+      {view === 'home' && <Home key="home" onPlay={play} onHowTo={() => setModal('howto')} onRanking={() => setModal('ranking')} onTeams={goSetup} />}
         {view === 'setup' && <TeamsSetup key="setup" onBack={() => setView(state.status === 'playing' ? 'game' : 'home')} onStarted={() => withWipe(goGame)} onSaved={goGame} />}
         {view === 'game' && <GameScreen key="game" onHome={goHome} onTeams={goSetup} />}
-      </AnimatePresence>
 
       <PlayWipe show={wipe} />
       <TeacherPanel onTeams={goSetup} onRanking={() => setModal('ranking')} onGame={goGame} />
