@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion'
-import { ArrowLeft, Plus, RotateCcw, Sparkles, Swords, Trash2 } from 'lucide-react'
+import { ArrowLeft, Plus, RotateCcw, Swords, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { TeamAvatar } from '../components/bits'
 import { CandyButton } from '../components/CandyButton'
@@ -14,8 +14,8 @@ type Draft = Pick<Team, 'id' | 'name' | 'members' | 'emoji' | 'color' | 'photo'>
 
 function presetDrafts(n: number): Draft[] {
   return TEAM_PRESETS.slice(0, n).map((p) => {
-    const t = makeTeam(p)
-    return { id: t.id, name: t.name, members: '', emoji: t.emoji, color: t.color, photo: t.photo ?? null }
+    const t = makeTeam({ ...p, name: '' })
+    return { id: t.id, name: '', members: '', emoji: t.emoji, color: t.color, photo: t.photo ?? null }
   })
 }
 
@@ -41,14 +41,14 @@ export function TeamsSetup({ onBack, onStarted, onSaved }: { onBack: () => void;
   const add = () => {
     if (drafts.length >= MAX_TEAMS) return
     sfx.pop()
-    const used = new Set(drafts.map((d) => d.name))
-    const preset = TEAM_PRESETS.find((p) => !used.has(p.name)) ?? TEAM_PRESETS[drafts.length % TEAM_PRESETS.length]
+    const usedEmojis = new Set(drafts.map((d) => d.emoji))
+    const preset = TEAM_PRESETS.find((p) => !usedEmojis.has(p.emoji)) ?? TEAM_PRESETS[drafts.length % TEAM_PRESETS.length]
     const usedColors = new Set(drafts.map((d) => d.color))
     const color = usedColors.has(preset.color) ? (COLOR_KEYS.find((c) => !usedColors.has(c)) ?? preset.color) : preset.color
     const usedPhotos = new Set(drafts.map((d) => d.photo).filter(Boolean))
     const photo = preset.photo && !usedPhotos.has(preset.photo) ? preset.photo : (PHOTO_AVATARS.find((p) => !usedPhotos.has(p.id))?.id ?? null)
-    const t = makeTeam({ ...preset, color, photo })
-    setDrafts((d) => [...d, { id: t.id, name: t.name, members: '', emoji: t.emoji, color: t.color, photo: t.photo ?? null }])
+    const t = makeTeam({ ...preset, name: '', color, photo })
+    setDrafts((d) => [...d, { id: t.id, name: '', members: '', emoji: t.emoji, color: t.color, photo: t.photo ?? null }])
   }
 
   const remove = (id: string) => {
@@ -58,26 +58,43 @@ export function TeamsSetup({ onBack, onStarted, onSaved }: { onBack: () => void;
 
   const finalTeams = (): Team[] => {
     const byId = new Map(state.teams.map((t) => [t.id, t]))
-    return drafts.map((d, i) => {
-      const clean = { ...d, name: d.name.trim() || `Equipo ${i + 1}`, members: d.members.trim() }
+    return drafts.map((d) => {
+      const clean = { ...d, name: d.name.trim(), members: d.members.trim() }
       const prev = byId.get(d.id)
       return prev ? { ...prev, ...clean } : makeTeam(clean)
     })
   }
 
+  const [tried, setTried] = useState(false)
+  const missing = drafts.filter((d) => !d.name.trim())
+
+  /** Solo deja avanzar si todas las agencias tienen nombre; si no, marca los campos y lleva al primero. */
+  const requireNames = (): boolean => {
+    if (!missing.length) return true
+    setTried(true)
+    sfx.wrong()
+    const el = document.getElementById(`name-${missing[0].id}`) as HTMLInputElement | null
+    el?.scrollIntoView({ block: 'center', behavior: 'smooth' })
+    el?.focus()
+    return false
+  }
+
   const start = () => {
+    if (!requireNames()) return
     dispatch({ type: 'setTeams', teams: finalTeams(), settings: { duration, pace } })
     dispatch({ type: 'startGame' })
     onStarted()
   }
 
   const save = () => {
+    if (!requireNames()) return
     dispatch({ type: 'setTeams', teams: finalTeams(), settings: { pace } })
     onSaved()
   }
 
   const ask = useConfirm()
   const restartWith = async () => {
+    if (!requireNames()) return
     if (!(await ask('¿Empezar una partida nueva? Los puntos actuales se borran.', { yes: 'Sí, empezar', danger: true }))) return
     start()
   }
@@ -99,20 +116,9 @@ export function TeamsSetup({ onBack, onStarted, onSaved }: { onBack: () => void;
             {playing ? 'EDITAR EQUIPOS' : 'ARMA TUS AGENCIAS'} <span aria-hidden>🏢</span>
           </h1>
           <p className="mt-2 text-[1.15rem] font-extrabold text-white/85">
-            De {MIN_TEAMS} a {MAX_TEAMS} equipos. Cada uno es una agencia que compite por ser la Agencia Maestra.
+            De {MIN_TEAMS} a {MAX_TEAMS} equipos. Cada equipo escribe el nombre de su agencia para poder empezar.
           </p>
         </div>
-        {!playing && (
-          <button
-            onClick={() => {
-              sfx.pop()
-              setDrafts(presetDrafts(Math.max(drafts.length, 4)))
-            }}
-            className="inline-flex items-center gap-2 rounded-full bg-white/12 px-4 py-2 font-extrabold text-white ring-1 ring-white/25 hover:bg-white/20"
-          >
-            <Sparkles className="size-5" /> Usar nombres de ejemplo
-          </button>
-        )}
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -188,21 +194,32 @@ export function TeamsSetup({ onBack, onStarted, onSaved }: { onBack: () => void;
                   </div>
                   <div className="min-w-0 flex-1">
                     <label className="block text-[0.8rem] font-black uppercase tracking-wider text-ink-soft" htmlFor={`name-${d.id}`}>
-                      Agencia {i + 1}
+                      Agencia {i + 1} · <span className="whitespace-nowrap">Nombre <span className="text-bubble-deep" aria-hidden>*</span></span>
                     </label>
                     <input
                       id={`name-${d.id}`}
                       value={d.name}
                       maxLength={22}
+                      required
+                      autoComplete="off"
+                      aria-invalid={tried && !d.name.trim()}
+                      aria-describedby={tried && !d.name.trim() ? `name-err-${d.id}` : undefined}
                       onChange={(e) => update(d.id, { name: e.target.value })}
-                      placeholder={`Equipo ${i + 1}`}
-                      className="font-display w-full rounded-xl border-2 border-[#e6defc] bg-[#f7f4ff] px-3 py-1.5 text-[1.45rem] text-ink outline-none focus:border-grape"
+                      placeholder="Escriban su nombre…"
+                      className={`font-display w-full rounded-xl border-2 px-3 py-1.5 text-[1.45rem] text-ink outline-none placeholder:font-sans placeholder:text-[1.05rem] placeholder:font-bold placeholder:text-ink-soft/60 ${
+                        tried && !d.name.trim() ? 'border-[#e11d48] bg-[#fff1f3] focus:border-[#e11d48]' : 'border-[#e6defc] bg-[#f7f4ff] focus:border-grape'
+                      }`}
                     />
+                    {tried && !d.name.trim() && (
+                      <p id={`name-err-${d.id}`} className="mt-1 text-[0.9rem] font-extrabold text-[#be123c]">
+                        Escriban el nombre de la agencia.
+                      </p>
+                    )}
                   </div>
                   <button
                     onClick={() => remove(d.id)}
                     disabled={drafts.length <= MIN_TEAMS}
-                    aria-label={`Quitar ${d.name || `equipo ${i + 1}`}`}
+                    aria-label={`Quitar ${d.name.trim() || `agencia ${i + 1}`}`}
                     className="grid size-11 shrink-0 place-items-center rounded-xl text-ink-soft transition hover:bg-red-50 hover:text-red-600 disabled:opacity-30"
                   >
                     <Trash2 className="size-5" />
@@ -310,6 +327,12 @@ export function TeamsSetup({ onBack, onStarted, onSaved }: { onBack: () => void;
           </p>
         </fieldset>
       </div>
+
+      {tried && missing.length > 0 && (
+        <p role="alert" className="mx-auto mt-6 max-w-2xl rounded-2xl bg-[#fff1f3] px-4 py-2.5 text-center text-[1.1rem] font-black text-[#be123c]">
+          {missing.length === 1 ? 'Falta 1 nombre' : `Faltan ${missing.length} nombres`}: cada agencia debe escribir su nombre para empezar.
+        </p>
+      )}
 
       <div className="mt-7 flex flex-wrap items-center justify-center gap-4">
         {playing ? (

@@ -177,7 +177,14 @@ export function Final({ onHome, onTeams }: { onHome: () => void; onTeams: () => 
         <CandyButton tone="sun" className="shine text-[1.9rem]" onClick={() => dispatch({ type: 'startGame' })}>
           <RotateCcw className="size-7" strokeWidth={3} /> JUGAR DE NUEVO
         </CandyButton>
-        <CandyButton tone="bubble" className="text-[1.3rem]" onClick={onTeams}>
+        <CandyButton
+          tone="bubble"
+          className="text-[1.3rem]"
+          onClick={() => {
+            dispatch({ type: 'newGame' })
+            onTeams()
+          }}
+        >
           <Users className="size-6" /> Nuevos equipos
         </CandyButton>
         <CandyButton tone="ghost" className="text-[1.3rem]" onClick={onHome}>
